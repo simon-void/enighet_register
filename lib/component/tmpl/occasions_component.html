@@ -1,0 +1,24 @@
+<div class="headline">Examina</div>
+
+<button (click)="addOccasion()" class="solobutton">lägg till examen</button>
+
+<table>
+  <thead>
+    <tr>
+      <td class="tdesc">dag</td>
+      <td class="tdesc">#deltagare</td>
+      <td class="tdesc">info</td>
+      <td class="tdesc">titta</td>
+      <td class="tdesc">ta bort</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let occasion of occasions">
+      <td>{{occasion.day| date: 'yyyy-MM-dd'}}</td>
+      <td class="middle">{{getExameeCount(occasion)}}</td>
+      <td>{{occasion.info}}</td>
+      <td class="middle"><button (click)="viewOccasion(occasion)">V</button></td>
+      <td class="middle"><button (click)="removeOccasion(occasion)">X</button></td>
+    </tr>
+  </tbody>
+</table>

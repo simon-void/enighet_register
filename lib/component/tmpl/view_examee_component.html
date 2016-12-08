@@ -1,0 +1,44 @@
+<div class="headline">Graderade</div>
+
+<table *ngIf="examinee != null">
+  <tr>
+    <td class="tdesc">förenamn</td>
+    <td>{{examinee.firstname}}</td>
+  </tr>
+  <tr>
+    <td class="tdesc">efternamn</td>
+    <td>{{examinee.lastname}}</td>
+  </tr>
+  <tr>
+    <td class="tdesc">födelsedag</td>
+    <td>{{examinee.birthday| date: 'yyyy-MM-dd'}}</td>
+  </tr>
+  <tr>
+    <td class="tdesc">info</td>
+    <td>{{examinee.info}}</td>
+  </tr>
+</table>
+<button (click)="editExaminee(examinee)" class="solobutton">ändra graderade</button>
+
+<div class="subheadline">Graderingar</div>
+
+<table>
+  <thead>
+    <tr>
+      <td class="tdesc">graderad till</td>
+      <td class="tdesc">dag</td>
+      <td class="tdesc">info</td>
+      <td class="tdesc">ta bort</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let gradering of graderingar">
+      <td>{{gradering.grade.name}}</td>
+      <td>{{gradering.examen.day| date: 'yyyy-MM-dd'}}</td>
+      <td>{{gradering.examen.info}}</td>
+      <td class="middle"><button (click)="removeGradering(gradering)">X</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<button (click)="goBack()" class="solobutton">tillbaka</button>

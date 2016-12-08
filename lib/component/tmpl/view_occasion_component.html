@@ -1,0 +1,61 @@
+<div class="headline">Examina</div>
+
+<table *ngIf="occasion != null">
+  <tr>
+    <td class="tdesc">dag</td>
+    <td>{{occasion.day | date: 'yyyy-MM-dd'}}</td>
+  </tr>
+  <tr>
+    <td class="tdesc">info</td>
+    <td>{{occasion.info}}</td>
+  </tr>
+</table>
+<button (click)="editExamen(occasion)" class="solobutton">ändra examen</button>
+
+<div class="subheadline">Graderade</div>
+
+<table>
+  <thead>
+    <tr>
+      <td class="tdesc">förenamn</td>
+      <td class="tdesc">efternamn</td>
+      <td class="tdesc">födelsedag</td>
+      <td class="tdesc">graderad till</td>
+      <td class="tdesc">ta bort</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let gradering of graderingar">
+      <td>{{gradering.examinee.firstname}}</td>
+      <td>{{gradering.examinee.lastname}}</td>
+      <td>{{gradering.examinee.birthday| date: 'yyyy-MM-dd'}}</td>
+      <td>{{gradering.grade.name}}</td>
+      <td class="middle"><button (click)="removeGradering(gradering)">X</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<button (click)="goBack()" class="solobutton">tillbaka</button>
+
+<div class="subheadline">lägg till graderade</div>
+
+<table>
+  <thead>
+    <tr>
+      <td class="tdesc">förenamn</td>
+      <td class="tdesc">efternamn</td>
+      <td class="tdesc">födelsedag</td>
+      <td class="tdesc">graderad till</td>
+      <td class="tdesc">lägg till</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let examineeWithGrade of examineesToAdd">
+      <td>{{examineeWithGrade.examinee.firstname}}</td>
+      <td>{{examineeWithGrade.examinee.lastname}}</td>
+      <td>{{examineeWithGrade.examinee.birthday| date: 'yyyy-MM-dd'}}</td>
+      <td>{{examineeWithGrade.grade}}</td>
+      <td class="middle"><button (click)="addGradering(examineeWithGrade)">A</button></td>
+    </tr>
+  </tbody>
+</table>

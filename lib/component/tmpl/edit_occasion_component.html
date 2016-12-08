@@ -1,0 +1,15 @@
+<div class="headline">Examen</div>
+
+<table *ngIf="occasionVO != null">
+  <tr>
+    <td class="tdesc">dag</td>
+    <td><input [(ngModel)]="occasionVO.formatedDay" placeholder="yyyy-mm-dd"></td>
+  </tr>
+  <tr>
+    <td class="tdesc">info</td>
+    <td><input [(ngModel)]="occasionVO.info" placeholder="info"></td>
+  </tr>
+</table>
+
+<button (click)="goBack()" class="solobutton">tillbaka</button>
+<button (click)="approve()" class="solobutton">godkänn</button>

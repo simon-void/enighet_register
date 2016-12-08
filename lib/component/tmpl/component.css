@@ -1,0 +1,43 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+table {
+  margin-bottom: 5px;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+
+.tdesc {
+  color: #345;
+  background-color: #ACE;
+  font-weight: bold;
+  text-align: center;
+}
+
+.selected {
+  background-color: #CFD8DC !important;
+  color: white;
+}
+
+.middle {
+  text-align: center;
+}
+
+.headline {
+  font-size: 140%;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.subheadline {
+  font-size: 120%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.solobutton {
+  margin:0px 5px 15px 0px;
+}

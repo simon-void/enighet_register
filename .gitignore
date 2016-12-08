@@ -1,0 +1,6 @@
+.idea/
+.pub/
+build/
+pubspec.lock
+.packages
+*.iml
