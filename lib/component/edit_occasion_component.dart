@@ -1,51 +1,59 @@
-import 'dart:html';
-
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
+import 'package:pikaday_datepicker/pikaday_datepicker.dart';
 
-import 'package:enighet_register/model/model_vo.dart';
+import 'package:enighet_register/component/error_msg_component.dart';
+import 'package:enighet_register/model/model.dart';
 import 'package:enighet_register/service/data_service.dart';
+import 'package:enighet_register/service/nav_service.dart';
+import 'package:enighet_register/service/util.dart';
 
 @Component(
-    selector: 'ar-edit-occasion', templateUrl: 'tmpl/edit_occasion_component.html', styleUrls: const ["tmpl/component.css"])
+    selector: 'edit-occasion',
+    templateUrl: 'tmpl/edit_occasion_component.html',
+    styleUrls: const ["tmpl/css/component.css"],
+    directives: const [PikadayComponent, ErrorMsgComponent]
+)
 class EditOccasionComponent implements OnInit {
-  OccasionVO occasionVO;
-  String editId;
-
+  Occasion occasion;
+  String errorMsg;
+  final List<int> yearRange;
+  final String editId;
   final DataService _dataService;
-  final RouteParams _routeParams;
+  final NavigationService nav;
+  bool get doCreateNew => editId==null;
+  bool get isInit => occasion!=null;
 
-  EditOccasionComponent(this._dataService, this._routeParams);
+  EditOccasionComponent(this._dataService, this.nav, RouteParams routeParams)
+    : editId = routeParams.get('id'),
+      yearRange = [1950, today.year+1];
 
   @override
-  void ngOnInit() {
-    editId = _routeParams.get('id');
-    if (editId != null) {
-      _dataService.getExamOccasion(editId).then((dataOccasion) {
-        occasionVO = new OccasionVO.from(dataOccasion);
-      });
+  ngOnInit() async {
+    if (doCreateNew) {
+      occasion = new Occasion.empty();
     } else {
-      occasionVO = new OccasionVO.fresh();
+      var realOccasion = await _dataService.getOccasion(editId);
+      occasion = realOccasion.copy();
     }
   }
 
-  void goBack() {
-    window.history.back();
-  }
-
-  void approve() {
-    if (occasionVO.validate()) {
-      if (editId == null) {
-        // new examee
-        _dataService.addOccasion(occasionVO.day, occasionVO.info);
+  approve() async {
+    if (validate(occasion)) {
+      if (doCreateNew) {
+        await _dataService.addOccasion(occasion);
       } else {
-        // update examee
-        _dataService.getExamOccasion(editId).then((dataOccasion) {
-          dataOccasion.info = occasionVO.info;
-          dataOccasion.day = occasionVO.day;
-        });
+        await _dataService.updateOccasion(occasion);
       }
-      goBack();
+      nav.goBack();
     }
+  }
+
+  bool validate(Occasion occasion) {
+    if(occasion?.day==null) {
+      errorMsg = "snälla lägg till födelsedagen";
+      return false;
+    }
+    return true;
   }
 }

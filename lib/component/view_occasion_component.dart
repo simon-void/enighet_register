@@ -1,80 +1,76 @@
-import 'dart:html';
-
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
 
 import 'package:enighet_register/model/model.dart';
 import 'package:enighet_register/service/data_service.dart';
+import 'package:enighet_register/service/nav_service.dart';
 
 @Component(
-    selector: 'ar-view-occasion', templateUrl: 'tmpl/view_occasion_component.html', styleUrls: const ["tmpl/component.css"])
+    selector: 'view-occasion',
+    templateUrl: 'tmpl/view_occasion_component.html',
+    styleUrls: const ["tmpl/css/component.css"]
+)
 class ViewOccasionComponent implements OnInit {
-  Examen occasion;
-  List<Gradering> graderingar = [];
+  Occasion occasion;
+  List<Grading> gradings = [];
   List<ExamineeWithGrade> examineesToAdd = [];
-  Map<String, List<Gradering>> graderingarByExamineeId;
+  Map<String, List<GradingData>> gradingsByExamineeId;
 
   final DataService _dataService;
   final RouteParams _routeParams;
-  final Router _router;
+  final NavigationService nav;
 
-  ViewOccasionComponent(this._dataService, this._routeParams, this._router);
+  ViewOccasionComponent(this._dataService, this._routeParams, this.nav);
 
   @override
   ngOnInit() async {
     var id = _routeParams.get('id');
-    occasion = await _dataService.getExamOccasion(id);
-    var allExams = await _dataService.getExams();
-    var allExamees = await _dataService.getExamees();
+    occasion = await _dataService.getOccasion(id);
+    var allGradingsData = await _dataService.getGradings();
+    var allExamees = await _dataService.getExaminees();
 
-    graderingar.addAll(allExams.where((exam) => exam.examen.id == occasion.id));
+    gradings = new List.from(
+        await _dataService.getFullGradings(occasion: occasion)
+    );
     //init examsByExameeId
-    graderingarByExamineeId = new Map();
-    //sort the exams by examee
-    for (Gradering exam in allExams) {
-      var exameeId = exam.examinee.id;
-      graderingarByExamineeId.putIfAbsent(exameeId, () => new List());
-      graderingarByExamineeId[exameeId].add(exam);
+    gradingsByExamineeId = {};
+    //sort the gradings by examineeId
+    for (GradingData grading in allGradingsData) {
+      var exameeId = grading.examineeId;
+      gradingsByExamineeId.putIfAbsent(exameeId, () => new List());
+      gradingsByExamineeId[exameeId].add(grading);
     }
     //sort the exams by occasion.day descending
-    for (List<Gradering> exams in graderingarByExamineeId.values) {
-      exams.sort((e1, e2) => compareOccasionDescending(e1.examen, e2.examen));
+    for (List<GradingData> gradings in gradingsByExamineeId.values) {
+      gradings.sort((g1, g2) => g1.grade.compareTo(g2.grade));
     }
     //comute which examees are not connected to this occasion yet
     examineesToAdd.addAll(allExamees.where((examee) {
-      var examsByExamee = graderingarByExamineeId[examee.id];
+      var examsByExamee = gradingsByExamineeId[examee.id];
       if (examsByExamee == null) {
         return true;
       }
-      return !examsByExamee.any((Gradering exam) => exam.examen.id == occasion.id);
+      return !examsByExamee.any((GradingData grading) => grading.occasionId == occasion.id);
     }).map((Examinee examee) {
       return new ExamineeWithGrade(examee, getNextGrade(examee));
     }));
   }
 
-  void removeGradering(Gradering gradering) {
-    _dataService.removeExam(gradering.examinee.id, occasion.id);
+  void removeGradering(Grading gradering) {
+    _dataService.removeGrading(gradering.examinee.id, occasion.id);
     // remove the local copies
-    graderingar.removeWhere((e) => e.examinee.id == gradering.examinee.id);
-    graderingarByExamineeId[gradering.examinee.id].remove(gradering);
+    gradings.removeWhere((e) => e.examinee.id == gradering.examinee.id);
+    gradingsByExamineeId[gradering.examinee.id].remove(gradering);
     // add the examee back to the pool
     final examinee = gradering.examinee;
     examineesToAdd.add(new ExamineeWithGrade(examinee, getNextGrade(examinee)));
   }
 
-  void editExamen(Examen occasion) {
-    var link = [
-      'EditOccasion',
-      {'id': occasion.id}
-    ];
-    _router.navigate(link);
-  }
-
   String getNextGrade(Examinee examee) {
     Grade currentGrade;
-    if (graderingarByExamineeId.containsKey(examee.id)) {
-      if (graderingarByExamineeId[examee.id].isNotEmpty) {
-        currentGrade = graderingarByExamineeId[examee.id][0].grade;
+    if (gradingsByExamineeId.containsKey(examee.id)) {
+      if (gradingsByExamineeId[examee.id].isNotEmpty) {
+        currentGrade = gradingsByExamineeId[examee.id][0].grade;
       }
     }
     if (currentGrade == null) {
@@ -83,18 +79,13 @@ class ViewOccasionComponent implements OnInit {
     return currentGrade.next.name;
   }
 
-  void addGradering(ExamineeWithGrade examineeWithGrade) {
-    var gradering = new Gradering(examineeWithGrade.examinee, occasion, Grade.gradesByName[examineeWithGrade.grade]);
-    graderingar.add(gradering);
-    _dataService.getExams().then((allaGraderingar) {
-      allaGraderingar.add(gradering);
-    });
+  addGradering(ExamineeWithGrade examineeWithGrade) async {
+    var graderingData = new GradingData(examineeWithGrade.examinee.id, occasion.id, Grade.gradesByName[examineeWithGrade.grade]);
+    var gradering = await _dataService.getFullGrading(graderingData);
+    gradings.add(gradering);
+    _dataService.addGrading(graderingData);
     examineesToAdd.remove(examineeWithGrade);
-    graderingarByExamineeId[examineeWithGrade.examinee.id] = [gradering];
-  }
-
-  void goBack() {
-    window.history.back();
+    gradingsByExamineeId[examineeWithGrade.examinee.id] = [graderingData];
   }
 }
 

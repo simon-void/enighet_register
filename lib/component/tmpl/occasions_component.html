@@ -1,6 +1,6 @@
 <div class="headline">Examina</div>
 
-<button (click)="addOccasion()" class="solobutton">lägg till examen</button>
+<button (click)="nav.gotoAddOccasion()" class="solobutton">lägg till examen</button>
 
 <table>
   <thead>
@@ -15,10 +15,10 @@
   <tbody>
     <tr *ngFor="let occasion of occasions">
       <td>{{occasion.day| date: 'yyyy-MM-dd'}}</td>
-      <td class="middle">{{getExameeCount(occasion)}}</td>
+      <td class="middle">{{getGradingCount(occasion)}}</td>
       <td>{{occasion.info}}</td>
-      <td class="middle"><button (click)="viewOccasion(occasion)">V</button></td>
-      <td class="middle"><button (click)="removeOccasion(occasion)">X</button></td>
+      <td class="middle"><button (click)="nav.gotoOccasion(occasion.id)">V</button></td>
+      <td class="middle"><button (click)="removeOccasion(occasion.id)">X</button></td>
     </tr>
   </tbody>
 </table>

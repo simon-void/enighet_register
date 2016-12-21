@@ -1,0 +1,28 @@
+<div class="headline">Examinees</div>
+
+<button (click)="nav.gotoAddExaminee()" class="solobutton">lägg till examinee</button>
+
+<table>
+  <thead>
+    <tr>
+      <td class="tdesc">efternamn</td>
+      <td class="tdesc">förenamn</td>
+      <td class="tdesc">födelsedag</td>
+      <td class="tdesc">senast graderad</td>
+      <td class="tdesc">info</td>
+      <td class="tdesc">titta</td>
+      <td class="tdesc">ta bort</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let examinee of examinees">
+      <td>{{examinee.lastname}}</td>
+      <td>{{examinee.firstname}}</td>
+      <td>{{examinee.birthday| date: 'yyyy-MM-dd'}}</td>
+      <td class="middle">{{highestGradeByExamineeId[examinee.id]}}</td>
+      <td>{{examinee.info}}</td>
+      <td class="middle"><button (click)="nav.gotoExaminee(examinee.id)">V</button></td>
+      <td class="middle"><button (click)="removeExaminee(examinee.id)">X</button></td>
+    </tr>
+  </tbody>
+</table>

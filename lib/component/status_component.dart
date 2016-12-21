@@ -4,26 +4,30 @@ import 'package:enighet_register/model/model.dart';
 import 'package:enighet_register/service/data_service.dart';
 
 @Component(
-    selector: 'ar-status',
+    selector: 'status',
     template: '''
-    <ul>
-      <li>examees: {{exameeCount}}</li>
-      <li>exams: {{occasionCount}}</li>
-    </ul>''')
+      <ul>
+        <li>number of graded examinees: {{examineeCount}}</li>
+        <li>at number of occasions: {{occasionCount}}</li>
+      </ul>'''
+)
 class StatusComponent implements OnInit {
-  int exameeCount = 0;
+  int examineeCount = 0;
   int occasionCount = 0;
   final DataService _dataService;
 
   StatusComponent(this._dataService);
 
   @override
-  void ngOnInit() {
-    _dataService.getExamees().then((List<Examinee> examees) {
-      exameeCount = examees.length;
+  ngOnInit() async {
+    List<GradingData> gradingsData = await _dataService.getGradings();
+    var examineeIds = new Set<String>();
+    var occasionIds = new Set<String>();
+    gradingsData.forEach((gradingData){
+      examineeIds.add(gradingData.examineeId);
+      occasionIds.add(gradingData.occasionId);
     });
-    _dataService.getExamOccasions().then((List<Examen> occasions) {
-      occasionCount = occasions.length;
-    });
+    examineeCount = examineeIds.length;
+    occasionCount = occasionIds.length;
   }
 }

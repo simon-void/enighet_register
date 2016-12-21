@@ -1,32 +1,37 @@
 import 'dart:async';
 
 import 'package:angular2/core.dart';
-import 'package:angular2/router.dart';
 
 import 'package:enighet_register/model/model.dart';
 import 'package:enighet_register/service/data_service.dart';
+import 'package:enighet_register/service/nav_service.dart';
 
-@Component(selector: 'ar-occasions', templateUrl: 'tmpl/occasions_component.html', styleUrls: const ['tmpl/component.css'])
+@Component(
+    selector: 'occasions',
+    templateUrl: 'tmpl/occasions_component.html',
+    styleUrls: const ['tmpl/css/component.css']
+)
 class OccasionsComponent implements OnInit, OnChanges {
-  List<Examen> occasions;
-  Map<String, List<Gradering>> examsByOccasionId;
+  List<Occasion> occasions;
+  Map<String, int> gradingCountByOccasionId;
 
   final DataService _dataService;
-  final Router _router;
+  final NavigationService nav;
 
-  OccasionsComponent(this._dataService, this._router);
+  OccasionsComponent(this._dataService, this.nav);
 
   @override
   ngOnInit() async {
     occasions = await sortByDate();
-    var allExams = await _dataService.getExams();
-    examsByOccasionId = new Map();
+    var allGradings = await _dataService.getGradings();
+    var gradingDataCountByOccasionId = <String, int>{};
     //sort the exams by examee
-    for (Gradering exam in allExams) {
-      var occasionId = exam.examen.id;
-      examsByOccasionId.putIfAbsent(occasionId, () => new List());
-      examsByOccasionId[occasionId].add(exam);
+    for (GradingData grading in allGradings) {
+      var occasionId = grading.occasionId;
+      int gradingCount = gradingDataCountByOccasionId[occasionId]??0;
+      gradingDataCountByOccasionId[occasionId] = gradingCount+1;
     }
+    gradingCountByOccasionId = gradingDataCountByOccasionId;
   }
 
   @override
@@ -34,35 +39,20 @@ class OccasionsComponent implements OnInit, OnChanges {
     await sortByDate();
   }
 
-  void removeOccasion(Examen occasion) {
-    occasions.remove(occasion);
+  void removeOccasion(String occasionId) {
+    _dataService.removeOccasion(occasionId);
   }
 
-  void viewOccasion(Examen occasion) {
-    var link = [
-      'ViewOccasion',
-      {'id': occasion.id}
-    ];
-    _router.navigate(link);
-  }
-
-  void addOccasion() {
-    var link = [
-      'EditOccasion',
-      {'id': null}
-    ];
-    _router.navigate(link);
-  }
-
-  String getExameeCount(Examen occasion) {
-    if (examsByOccasionId.containsKey(occasion.id)) {
-      return examsByOccasionId[occasion.id].length.toString();
+  String getGradingCount(Occasion occasion) {
+    int gradingCount = gradingCountByOccasionId[occasion.id];
+    if(gradingCount==null) {
+      return '0';
     }
-    return "0";
+    return gradingCount.toString();
   }
 
-  Future<List<Examen>> sortByDate() async {
-    var unsortedOccasions = await _dataService.getExamOccasions();
+  Future<List<Occasion>> sortByDate() async {
+    var unsortedOccasions = await _dataService.getOccasions();
     unsortedOccasions.sort(compareOccasionDescending);
     return unsortedOccasions;
   }

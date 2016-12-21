@@ -1,0 +1,25 @@
+<div class="headline">Examinee</div>
+
+<table *ngIf="isInit">
+  <tr>
+    <td class="tdesc">förenamn</td>
+    <td><input [(ngModel)]="examinee.firstname" placeholder="förenamn"></td>
+  </tr>
+  <tr>
+    <td class="tdesc">efternamn</td>
+    <td><input [(ngModel)]="examinee.lastname" placeholder="efternamn"></td>
+  </tr>
+  <tr>
+    <td class="tdesc">födelsedag</td>
+    <td><pikaday [(day)]="examinee.birthday" format="YYYY-MM-DD" [yearRange]="birthyearRange"></pikaday></td>
+  </tr>
+  <tr>
+    <td class="tdesc">info</td>
+    <td><input [(ngModel)]="examinee.info" placeholder="info"></td>
+  </tr>
+</table>
+
+<error [msg]="errorMsg"></error>
+
+<button (click)="nav.goBack()" class="solobutton">tillbaka</button>
+<button (click)="approve()" class="solobutton">godkänn</button>

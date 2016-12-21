@@ -1,15 +1,17 @@
 <div class="headline">Examen</div>
 
-<table *ngIf="occasionVO != null">
+<table *ngIf="isInit">
   <tr>
     <td class="tdesc">dag</td>
-    <td><input [(ngModel)]="occasionVO.formatedDay" placeholder="yyyy-mm-dd"></td>
+    <td><pikaday [(day)]="occasion.day" format="YYYY-MM-DD" [yearRange]="yearRange"></pikaday></td>
   </tr>
   <tr>
     <td class="tdesc">info</td>
-    <td><input [(ngModel)]="occasionVO.info" placeholder="info"></td>
+    <td><input [(ngModel)]="occasion.info" placeholder="info"></td>
   </tr>
 </table>
 
-<button (click)="goBack()" class="solobutton">tillbaka</button>
+<error [msg]="errorMsg"></error>
+
+<button (click)="nav.goBack()" [disabled]="!isInit" class="solobutton">tillbaka</button>
 <button (click)="approve()" class="solobutton">godkänn</button>

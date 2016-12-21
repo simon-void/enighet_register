@@ -1,5 +1,8 @@
 <div class="headline">Graderade</div>
 
+<button (click)="nav.goBack()" class="solobutton">tillbaka</button>
+<button (click)="nav.gotoEditExaminee(examinee.id)" class="solobutton">ändra graderade</button>
+
 <table *ngIf="examinee != null">
   <tr>
     <td class="tdesc">förenamn</td>
@@ -18,11 +21,13 @@
     <td>{{examinee.info}}</td>
   </tr>
 </table>
-<button (click)="editExaminee(examinee)" class="solobutton">ändra graderade</button>
 
 <div class="subheadline">Graderingar</div>
 
-<table>
+<div *ngIf="gradings.isEmpty">
+  inga
+</div>
+<table *ngIf="gradings.isNotEmpty">
   <thead>
     <tr>
       <td class="tdesc">graderad till</td>
@@ -32,13 +37,11 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let gradering of graderingar">
-      <td>{{gradering.grade.name}}</td>
-      <td>{{gradering.examen.day| date: 'yyyy-MM-dd'}}</td>
-      <td>{{gradering.examen.info}}</td>
-      <td class="middle"><button (click)="removeGradering(gradering)">X</button></td>
+    <tr *ngFor="let grading of gradings">
+      <td>{{grading.grade.name}}</td>
+      <td>{{grading.occasion.day| date: 'yyyy-MM-dd'}}</td>
+      <td>{{grading.occasion.info}}</td>
+      <td class="middle"><button (click)="removeGradering(grading)">X</button></td>
     </tr>
   </tbody>
 </table>
-
-<button (click)="goBack()" class="solobutton">tillbaka</button>
