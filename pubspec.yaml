@@ -1,6 +1,6 @@
 name: enighet_register
 description: aikido grades webapp with firebase backend
-version: 0.0.4
+version: 0.0.5
 environment:
   sdk: '>=1.21.0 <2.0.0'
 dependencies:

@@ -57,8 +57,13 @@
       <td>{{examineeWithGrade.examinee.firstname}}</td>
       <td>{{examineeWithGrade.examinee.lastname}}</td>
       <td>{{examineeWithGrade.examinee.birthday| date: 'yyyy-MM-dd'}}</td>
-      <td>{{examineeWithGrade.grade}}</td>
-      <td class="middle"><button (click)="addGradering(examineeWithGrade)">A</button></td>
+      <td class="middle">
+        <select [(ngModel)]="examineeWithGrade.gradeName">
+          <option *ngFor="let grade of allGrades"
+                  [value]="grade.name">{{grade.name}}</option>
+        </select>
+      </td>
+      <td class="middle"><button (click)="addGrading(examineeWithGrade)">A</button></td>
     </tr>
   </tbody>
 </table>

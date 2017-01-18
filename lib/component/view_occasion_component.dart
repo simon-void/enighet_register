@@ -11,10 +11,13 @@ import 'package:enighet_register/service/nav_service.dart';
     styleUrls: const ["tmpl/css/component.css"]
 )
 class ViewOccasionComponent implements OnInit {
+  var model;
   Occasion occasion;
   List<Grading> gradings = [];
   List<ExamineeWithGrade> examineesToAdd = [];
   Map<String, List<GradingData>> gradingsByExamineeId;
+
+  final List<Grade> allGrades = Grade.allGrades;
 
   final DataService _dataService;
   final RouteParams _routeParams;
@@ -79,8 +82,8 @@ class ViewOccasionComponent implements OnInit {
     return currentGrade.next.name;
   }
 
-  addGradering(ExamineeWithGrade examineeWithGrade) async {
-    var graderingData = new GradingData(examineeWithGrade.examinee.id, occasion.id, Grade.gradesByName[examineeWithGrade.grade]);
+  addGrading(ExamineeWithGrade examineeWithGrade) async {
+    var graderingData = new GradingData(examineeWithGrade.examinee.id, occasion.id, Grade.gradesByName[examineeWithGrade.gradeName]);
     var gradering = await _dataService.getFullGrading(graderingData);
     gradings.add(gradering);
     _dataService.addGrading(graderingData);
@@ -91,7 +94,7 @@ class ViewOccasionComponent implements OnInit {
 
 class ExamineeWithGrade {
   Examinee examinee;
-  String grade;
+  String gradeName;
 
-  ExamineeWithGrade(this.examinee, this.grade);
+  ExamineeWithGrade(this.examinee, this.gradeName);
 }
