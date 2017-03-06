@@ -1,6 +1,6 @@
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
-import 'package:pikaday_datepicker/pikaday_datepicker.dart';
+import 'package:pikaday_datepicker_angular2/pikaday_datepicker_angular2.dart';
 
 import 'package:enighet_register/component/error_msg_component.dart';
 import 'package:enighet_register/model/model.dart';

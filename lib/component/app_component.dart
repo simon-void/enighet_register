@@ -10,7 +10,7 @@ import 'package:enighet_register/component/status_component.dart';
 import 'package:enighet_register/service/data_service.dart';
 import 'package:enighet_register/service/local_data_service.dart';
 import 'package:enighet_register/service/nav_service.dart';
-import 'package:pikaday_datepicker/pikaday_datepicker.dart';
+import 'package:pikaday_datepicker_angular2/pikaday_datepicker_angular2.dart';
 
 @Component(
     selector: 'aikido-register',

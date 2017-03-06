@@ -6,7 +6,7 @@ environment:
 dependencies:
   angular2: ^2.2.0
   meta: ^1.0.4
-  pikaday_datepicker: ^0.8.5
+  pikaday_datepicker_angular2: '>=1.0.0 <2.0.0'
 dev_dependencies:
   browser: ^0.10.0
   dart_to_js_script_rewriter: ^1.0.1
